@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishi — Script Feedback</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+  .card { background: #fff; border-radius: 16px; padding: 24px; max-width: 480px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 17px; font-weight: 600; color: #111; margin-bottom: 4px; }
+  .header p { font-size: 13px; color: #888; line-height: 1.5; }
+  .progress { display: flex; gap: 4px; margin-bottom: 24px; }
+  .prog-dot { height: 3px; flex: 1; border-radius: 2px; background: #eee; transition: background .3s; }
+  .prog-dot.done { background: #111; }
+  .prog-dot.active { background: #555; }
+  .section-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #aaa; margin-bottom: 8px; }
+  .q-label { font-size: 15px; font-weight: 500; color: #111; margin-bottom: 6px; line-height: 1.4; }
+  .q-sub { font-size: 12px; color: #999; margin-bottom: 12px; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { font-size: 13px; padding: 10px 14px; border-radius: 10px; border: 1px solid #e5e5e5; color: #333; cursor: pointer; background: #fff; text-align: left; transition: all .15s; }
+  .opt:hover { border-color: #bbb; background: #fafafa; }
+  .opt.selected { border-color: #111; background: #111; color: #fff; }
+  textarea { width: 100%; font-size: 13px; padding: 10px 12px; border-radius: 10px; border: 1px solid #e5e5e5; color: #333; background: #fff; resize: vertical; min-height: 80px; margin-top: 4px; font-family: inherit; outline: none; }
+  textarea:focus { border-color: #bbb; }
+  .nav { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { flex: 1; padding: 11px; font-size: 13px; font-weight: 500; border-radius: 10px; border: 1px solid #e5e5e5; cursor: pointer; background: #fff; color: #333; transition: all .15s; }
+  .btn:hover { background: #f5f5f5; }
+  .btn.primary { background: #111; color: #fff; border-color: #111; }
+  .btn.primary:hover { background: #333; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .step { display: none; }
+  .step.active { display: block; }
+  .done-screen { text-align: center; padding: 20px 0; }
+  .done-screen h2 { font-size: 20px; margin-bottom: 8px; }
+  .done-screen p { font-size: 13px; color: #888; margin-bottom: 20px; }
+  .summary { background: #f8f8f8; border-radius: 10px; padding: 14px; text-align: left; font-size: 12px; color: #555; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>Script feedback</h1>
+    <p>@physicsexperimental — Week 1 scripts. 2 mins.</p>
+  </div>
+  <div class="progress" id="progress"></div>
+
+  <!-- Step 1 -->
+  <div class="step active" id="step-1">
+    <div class="section-tag">Language & voice</div>
+    <div class="q-label">1. Does the script sound like you?</div>
+    <div class="q-sub">Read it out loud — does it feel natural or forced?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(1,'Yes, exactly how I talk')">Yes, exactly how I talk</button>
+      <button class="opt" onclick="pick(1,'Close but needs small fixes')">Close but needs small fixes</button>
+      <button class="opt" onclick="pick(1,'No, sounds like someone else')">No, sounds like someone else</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step-2">
+    <div class="section-tag">Language & voice</div>
+    <div class="q-label">2. Do the sentences feel formal or natural?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(2,'Natural — this is how I speak')">Natural — this is how I speak</button>
+      <button class="opt" onclick="pick(2,'Slightly formal')">Slightly formal</button>
+      <button class="opt" onclick="pick(2,'Too formal, needs to be looser')">Too formal, needs to be looser</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step-3">
+    <div class="section-tag">Language & voice</div>
+    <div class="q-label">3. Hinglish ratio — is it right?</div>
+    <div class="q-sub">Currently: mostly Hindi base, English for science terms and connectors</div>
+    <div class="options">
+      <button class="opt" onclick="pick(3,'Perfect mix')">Perfect mix</button>
+      <button class="opt" onclick="pick(3,'More Hindi needed')">More Hindi needed</button>
+      <button class="opt" onclick="pick(3,'More English needed')">More English needed</button>
+      <button class="opt" onclick="pick(3,'I prefer full English')">I prefer full English</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step" id="step-4">
+    <div class="section-tag">Script structure</div>
+    <div class="q-label">4. Script length — how does it feel?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(4,'Right length')">Right length</button>
+      <button class="opt" onclick="pick(4,'Too short')">Too short</button>
+      <button class="opt" onclick="pick(4,'Too long — I would cut it')">Too long — I would cut it</button>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step" id="step-5">
+    <div class="section-tag">Script structure</div>
+    <div class="q-label">5. Which script format worked better?</div>
+    <div class="q-sub">Script 1 = audio + video paired by timestamp. Script 2 = separate audio track then video track.</div>
+    <div class="options">
+      <button class="opt" onclick="pick(5,'Paired — easier on set')">Paired — easier on set</button>
+      <button class="opt" onclick="pick(5,'Separate tracks — cleaner to read')">Separate tracks — cleaner to read</button>
+      <button class="opt" onclick="pick(5,'No preference')">No preference</button>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step" id="step-6">
+    <div class="section-tag">Camera & production</div>
+    <div class="q-label">6. Camera settings — anything missing or wrong?</div>
+    <div class="q-sub">XA11 for wide/cinematic. Nord C6 for close-up/handheld. Ring light per shot.</div>
+    <div class="options">
+      <button class="opt" onclick="pick(6,'Looks right')">Looks right</button>
+      <button class="opt" onclick="pick(6,'Missing some details')">Missing some details</button>
+      <button class="opt" onclick="pick(6,'Wrong camera for some shots')">Wrong camera for some shots</button>
+    </div>
+    <textarea id="camera-notes" placeholder="Any specific camera notes..."></textarea>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step" id="step-7">
+    <div class="section-tag">Supporting outputs</div>
+    <div class="q-label">7. Hook, caption, hashtags — how useful?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(7,'Very useful — I would use these')">Very useful — I would use these</button>
+      <button class="opt" onclick="pick(7,'Good starting point, I would edit')">Good starting point, I would edit</button>
+      <button class="opt" onclick="pick(7,'Not useful — too generic')">Not useful — too generic</button>
+    </div>
+  </div>
+
+  <!-- Step 8 -->
+  <div class="step" id="step-8">
+    <div class="section-tag">Your additions</div>
+    <div class="q-label">8. Anything the script is missing?</div>
+    <div class="q-sub">Props needed, things to avoid, style notes, anything at all</div>
+    <textarea id="extra-notes" placeholder="Your notes here..."></textarea>
+    <div class="nav" style="margin-top:16px">
+      <button class="btn" onclick="prevStep()">Back</button>
+      <button class="btn primary" onclick="submitAll()">Submit feedback</button>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div class="step" id="step-done">
+    <div class="done-screen">
+      <h2>Thanks Rishi</h2>
+      <p>Feedback saved. Sharayu will update the agent based on your answers.</p>
+      <div class="summary" id="summary-text"></div>
+    </div>
+  </div>
+
+  <!-- Nav (shown on steps 1-7) -->
+  <div class="nav" id="main-nav">
+    <button class="btn" id="back-btn" onclick="prevStep()" disabled>Back</button>
+    <button class="btn primary" id="next-btn" onclick="nextStep()" disabled>Next</button>
+  </div>
+</div>
+
+<script>
+let current = 1;
+const total = 8;
+const answers = {};
+
+function buildProgress() {
+  const p = document.getElementById('progress');
+  p.innerHTML = '';
+  for (let i = 1; i <= total; i++) {
+    const d = document.createElement('div');
+    d.className = 'prog-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    p.appendChild(d);
+  }
+}
+
+function pick(q, val) {
+  answers[q] = val;
+  document.querySelectorAll('#step-' + q + ' .opt').forEach(o => o.classList.remove('selected'));
+  event.target.classList.add('selected');
+  if (q < 8) document.getElementById('next-btn').disabled = false;
+}
+
+function nextStep() {
+  if (!answers[current] && current < 8) return;
+  document.getElementById('step-' + current).classList.remove('active');
+  current++;
+  document.getElementById('step-' + current).classList.add('active');
+  document.getElementById('back-btn').disabled = false;
+  document.getElementById('next-btn').disabled = !answers[current];
+  if (current === 8) document.getElementById('main-nav').style.display = 'none';
+  buildProgress();
+}
+
+function prevStep() {
+  if (current <= 1) return;
+  document.getElementById('step-' + current).classList.remove('active');
+  if (current === 8) document.getElementById('main-nav').style.display = 'flex';
+  current--;
+  document.getElementById('step-' + current).classList.add('active');
+  document.getElementById('back-btn').disabled = current === 1;
+  document.getElementById('next-btn').disabled = false;
+  buildProgress();
+}
+
+function submitAll() {
+  const camera = document.getElementById('camera-notes').value;
+  const extra = document.getElementById('extra-notes').value;
+  const labels = {1:'Sounds like me',2:'Sentence formality',3:'Language mix',4:'Script length',5:'Format preference',6:'Camera settings',7:'Hook/caption/hashtags',8:'Missing elements'};
+  let summary = '';
+  for (let i = 1; i <= 7; i++) {
+    if (answers[i]) summary += `Q${i} — ${labels[i]}: ${answers[i]}\n`;
+  }
+  if (camera) summary += `Camera notes: ${camera}\n`;
+  if (extra) summary += `Missing elements: ${extra}`;
+  document.getElementById('step-8').classList.remove('active');
+  document.getElementById('step-done').classList.add('active');
+  document.getElementById('main-nav').style.display = 'none';
+  document.getElementById('summary-text').innerText = summary;
+  buildProgress();
+}
+
+buildProgress();
+</script>
+</body>
+</html>

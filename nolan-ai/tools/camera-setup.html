@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishi — Camera Setup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+  .card { background: #fff; border-radius: 16px; padding: 24px; max-width: 480px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 17px; font-weight: 600; color: #111; margin-bottom: 4px; }
+  .header p { font-size: 13px; color: #888; line-height: 1.5; }
+  .progress { display: flex; gap: 4px; margin-bottom: 24px; }
+  .prog-dot { height: 3px; flex: 1; border-radius: 2px; background: #eee; transition: background .3s; }
+  .prog-dot.done { background: #111; }
+  .prog-dot.active { background: #555; }
+  .section-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #aaa; margin-bottom: 8px; }
+  .q-label { font-size: 15px; font-weight: 500; color: #111; margin-bottom: 6px; line-height: 1.4; }
+  .q-sub { font-size: 12px; color: #999; margin-bottom: 12px; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { font-size: 13px; padding: 10px 14px; border-radius: 10px; border: 1px solid #e5e5e5; color: #333; cursor: pointer; background: #fff; text-align: left; transition: all .15s; }
+  .opt:hover { border-color: #bbb; background: #fafafa; }
+  .opt.selected { border-color: #111; background: #111; color: #fff; }
+  textarea { width: 100%; font-size: 13px; padding: 10px 12px; border-radius: 10px; border: 1px solid #e5e5e5; color: #333; background: #fff; resize: vertical; min-height: 70px; margin-top: 4px; font-family: inherit; outline: none; }
+  textarea:focus { border-color: #bbb; }
+  .nav { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { flex: 1; padding: 11px; font-size: 13px; font-weight: 500; border-radius: 10px; border: 1px solid #e5e5e5; cursor: pointer; background: #fff; color: #333; transition: all .15s; }
+  .btn:hover { background: #f5f5f5; }
+  .btn.primary { background: #111; color: #fff; border-color: #111; }
+  .btn.primary:hover { background: #333; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .step { display: none; }
+  .step.active { display: block; }
+  .done-screen { text-align: center; padding: 20px 0; }
+  .done-screen h2 { font-size: 20px; margin-bottom: 8px; }
+  .done-screen p { font-size: 13px; color: #888; margin-bottom: 20px; }
+  .summary { background: #f8f8f8; border-radius: 10px; padding: 14px; text-align: left; font-size: 12px; color: #555; line-height: 1.8; white-space: pre-wrap; }
+  .counter { font-size: 11px; color: #bbb; text-align: right; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>Camera & Setup Questions</h1>
+    <p>@physicsexperimental — Helps us write perfect shot-by-shot instructions for you.</p>
+  </div>
+  <div class="progress" id="progress"></div>
+
+  <!-- RING LIGHT SECTION -->
+
+  <!-- Step 1 -->
+  <div class="step active" id="step-1">
+    <div class="section-tag">Ring light</div>
+    <div class="counter">1 of 15</div>
+    <div class="q-label">1. What is the size of your ring light?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(1,'10 inch or smaller')">10 inch or smaller</button>
+      <button class="opt" onclick="pick(1,'12–14 inch')">12–14 inch</button>
+      <button class="opt" onclick="pick(1,'18 inch or larger')">18 inch or larger</button>
+      <button class="opt" onclick="pick(1,'Not sure')">Not sure</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step-2">
+    <div class="section-tag">Ring light</div>
+    <div class="counter">2 of 15</div>
+    <div class="q-label">2. Does your ring light have adjustable colour temperature?</div>
+    <div class="q-sub">Warm / Cool / Daylight switch or dial</div>
+    <div class="options">
+      <button class="opt" onclick="pick(2,'Yes — warm, cool and daylight options')">Yes — warm, cool and daylight options</button>
+      <button class="opt" onclick="pick(2,'Yes — just warm and cool')">Yes — just warm and cool</button>
+      <button class="opt" onclick="pick(2,'No — fixed colour only')">No — fixed colour only</button>
+      <button class="opt" onclick="pick(2,'Not sure')">Not sure</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step-3">
+    <div class="section-tag">Ring light</div>
+    <div class="counter">3 of 15</div>
+    <div class="q-label">3. Does it have adjustable brightness?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(3,'Yes — dial or remote')">Yes — dial or remote</button>
+      <button class="opt" onclick="pick(3,'Yes — limited levels')">Yes — limited levels (low/medium/high)</button>
+      <button class="opt" onclick="pick(3,'No — fixed brightness')">No — fixed brightness</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step" id="step-4">
+    <div class="section-tag">Ring light</div>
+    <div class="counter">4 of 15</div>
+    <div class="q-label">4. Does it come with a diffuser cover?</div>
+    <div class="q-sub">A white translucent cover that softens the light</div>
+    <div class="options">
+      <button class="opt" onclick="pick(4,'Yes, I use it')">Yes, I use it</button>
+      <button class="opt" onclick="pick(4,'Yes but I don\'t use it')">Yes but I don't use it</button>
+      <button class="opt" onclick="pick(4,'No diffuser')">No diffuser</button>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step" id="step-5">
+    <div class="section-tag">Ring light</div>
+    <div class="counter">5 of 15</div>
+    <div class="q-label">5. How tall is the ring light stand?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(5,'Desktop / table height')">Desktop / table height</button>
+      <button class="opt" onclick="pick(5,'Floor standing — medium height')">Floor standing — medium height</button>
+      <button class="opt" onclick="pick(5,'Floor standing — full height (5-6 ft)')">Floor standing — full height (5-6 ft)</button>
+    </div>
+  </div>
+
+  <!-- SHOOTING SPACE SECTION -->
+
+  <!-- Step 6 -->
+  <div class="step" id="step-6">
+    <div class="section-tag">Shooting space</div>
+    <div class="counter">6 of 15</div>
+    <div class="q-label">6. Which room do you usually shoot in?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(6,'Study / home office')">Study / home office</button>
+      <button class="opt" onclick="pick(6,'Living room')">Living room</button>
+      <button class="opt" onclick="pick(6,'Kitchen')">Kitchen</button>
+      <button class="opt" onclick="pick(6,'Bedroom')">Bedroom</button>
+      <button class="opt" onclick="pick(6,'Dedicated setup / studio corner')">Dedicated setup / studio corner</button>
+    </div>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step" id="step-7">
+    <div class="section-tag">Shooting space</div>
+    <div class="counter">7 of 15</div>
+    <div class="q-label">7. Are there windows in that room?</div>
+    <div class="q-sub">And which direction do they face roughly?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(7,'Yes — north facing (indirect light)')">Yes — north facing (indirect light)</button>
+      <button class="opt" onclick="pick(7,'Yes — south/east/west facing (direct sun possible)')">Yes — south/east/west facing (direct sun possible)</button>
+      <button class="opt" onclick="pick(7,'Yes — direction unknown')">Yes — direction unknown</button>
+      <button class="opt" onclick="pick(7,'No windows')">No windows</button>
+    </div>
+  </div>
+
+  <!-- Step 8 -->
+  <div class="step" id="step-8">
+    <div class="section-tag">Shooting space</div>
+    <div class="counter">8 of 15</div>
+    <div class="q-label">8. What time of day do you usually record?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(8,'Morning (6am–10am)')">Morning (6am–10am)</button>
+      <button class="opt" onclick="pick(8,'Daytime (10am–4pm)')">Daytime (10am–4pm)</button>
+      <button class="opt" onclick="pick(8,'Evening (4pm–8pm)')">Evening (4pm–8pm)</button>
+      <button class="opt" onclick="pick(8,'Night (8pm onwards)')">Night (8pm onwards)</button>
+      <button class="opt" onclick="pick(8,'Varies — no fixed time')">Varies — no fixed time</button>
+    </div>
+  </div>
+
+  <!-- Step 9 -->
+  <div class="step" id="step-9">
+    <div class="section-tag">Shooting space</div>
+    <div class="counter">9 of 15</div>
+    <div class="q-label">9. What type of room lights do you have?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(9,'Cool white LED')">Cool white LED</button>
+      <button class="opt" onclick="pick(9,'Warm white LED')">Warm white LED</button>
+      <button class="opt" onclick="pick(9,'Fluorescent tubelight')">Fluorescent tubelight</button>
+      <button class="opt" onclick="pick(9,'Mixed — different lights in the room')">Mixed — different lights in the room</button>
+    </div>
+  </div>
+
+  <!-- Step 10 -->
+  <div class="step" id="step-10">
+    <div class="section-tag">Shooting space</div>
+    <div class="counter">10 of 15</div>
+    <div class="q-label">10. Do you have a fixed shooting table or surface?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(10,'Yes — dedicated table with fixed background')">Yes — dedicated table with fixed background</button>
+      <button class="opt" onclick="pick(10,'Yes — a table but no fixed background')">Yes — a table but no fixed background</button>
+      <button class="opt" onclick="pick(10,'No — I set up differently each time')">No — I set up differently each time</button>
+    </div>
+  </div>
+
+  <!-- CANON XA11 SECTION -->
+
+  <!-- Step 11 -->
+  <div class="step" id="step-11">
+    <div class="section-tag">Canon XA11</div>
+    <div class="counter">11 of 15</div>
+    <div class="q-label">11. Do you shoot in Auto or Manual mode on the XA11?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(11,'Full Auto — camera decides everything')">Full Auto — camera decides everything</button>
+      <button class="opt" onclick="pick(11,'Semi-auto — I adjust some settings')">Semi-auto — I adjust some settings</button>
+      <button class="opt" onclick="pick(11,'Full Manual — I control aperture, shutter, ISO')">Full Manual — I control aperture, shutter, ISO</button>
+      <button class="opt" onclick="pick(11,'Never used it yet')">Never used it yet</button>
+    </div>
+  </div>
+
+  <!-- Step 12 -->
+  <div class="step" id="step-12">
+    <div class="section-tag">Canon XA11</div>
+    <div class="counter">12 of 15</div>
+    <div class="q-label">12. What format do you record in on the XA11?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(12,'MP4 (standard video)')">MP4 (standard video)</button>
+      <button class="opt" onclick="pick(12,'RAW or Cinema RAW')">RAW or Cinema RAW</button>
+      <button class="opt" onclick="pick(12,'Not sure what format')">Not sure what format</button>
+    </div>
+  </div>
+
+  <!-- Step 13 -->
+  <div class="step" id="step-13">
+    <div class="section-tag">Canon XA11</div>
+    <div class="counter">13 of 15</div>
+    <div class="q-label">13. What type of tripod head do you have for the XA11?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(13,'Fluid head — smooth pan and tilt')">Fluid head — smooth pan and tilt</button>
+      <button class="opt" onclick="pick(13,'Ball head — fixed position mostly')">Ball head — fixed position mostly</button>
+      <button class="opt" onclick="pick(13,'Basic tripod — no head control')">Basic tripod — no head control</button>
+      <button class="opt" onclick="pick(13,'Not sure')">Not sure</button>
+    </div>
+  </div>
+
+  <!-- NORD C6 SECTION -->
+
+  <!-- Step 14 -->
+  <div class="step" id="step-14">
+    <div class="section-tag">OnePlus Nord C6</div>
+    <div class="counter">14 of 15</div>
+    <div class="q-label">14. Have you used Pro Mode on the Nord C6 before?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(14,'Yes — comfortable with it')">Yes — comfortable with it</button>
+      <button class="opt" onclick="pick(14,'Tried it once or twice')">Tried it once or twice</button>
+      <button class="opt" onclick="pick(14,'Never used it')">Never used it</button>
+    </div>
+  </div>
+
+  <!-- Step 15 -->
+  <div class="step" id="step-15">
+    <div class="section-tag">OnePlus Nord C6</div>
+    <div class="counter">15 of 15</div>
+    <div class="q-label">15. What mic do you use with the Nord C6?</div>
+    <div class="options">
+      <button class="opt" onclick="pick(15,'External mic — plugged into the phone')">External mic — plugged into the phone</button>
+      <button class="opt" onclick="pick(15,'Wireless / Bluetooth mic')">Wireless / Bluetooth mic</button>
+      <button class="opt" onclick="pick(15,'Built-in phone mic only')">Built-in phone mic only</button>
+      <button class="opt" onclick="pick(15,'Separate recorder — sync in edit')">Separate recorder — sync in edit</button>
+    </div>
+    <div class="nav" style="margin-top:16px">
+      <button class="btn" onclick="prevStep()">Back</button>
+      <button class="btn primary" onclick="submitAll()">Submit</button>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div class="step" id="step-done">
+    <div class="done-screen">
+      <h2>Thanks Rishi 🎬</h2>
+      <p>Sharayu will use this to write perfect camera instructions for every script.</p>
+      <div class="summary" id="summary-text"></div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav" id="main-nav">
+    <button class="btn" id="back-btn" onclick="prevStep()" disabled>Back</button>
+    <button class="btn primary" id="next-btn" onclick="nextStep()" disabled>Next</button>
+  </div>
+</div>
+
+<script>
+let current = 1;
+const total = 15;
+const answers = {};
+
+const questions = {
+  1: 'Ring light size',
+  2: 'Colour temperature adjustment',
+  3: 'Brightness adjustment',
+  4: 'Diffuser cover',
+  5: 'Stand height',
+  6: 'Shooting room',
+  7: 'Windows direction',
+  8: 'Recording time of day',
+  9: 'Room light type',
+  10: 'Shooting table/surface',
+  11: 'XA11 shooting mode',
+  12: 'XA11 recording format',
+  13: 'Tripod head type',
+  14: 'Nord C6 Pro Mode experience',
+  15: 'Mic setup'
+};
+
+function buildProgress() {
+  const p = document.getElementById('progress');
+  p.innerHTML = '';
+  for (let i = 1; i <= total; i++) {
+    const d = document.createElement('div');
+    d.className = 'prog-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    p.appendChild(d);
+  }
+}
+
+function pick(q, val) {
+  answers[q] = val;
+  document.querySelectorAll('#step-' + q + ' .opt').forEach(o => o.classList.remove('selected'));
+  event.target.classList.add('selected');
+  if (q < 15) document.getElementById('next-btn').disabled = false;
+}
+
+function nextStep() {
+  if (!answers[current] && current < 15) return;
+  document.getElementById('step-' + current).classList.remove('active');
+  current++;
+  document.getElementById('step-' + current).classList.add('active');
+  document.getElementById('back-btn').disabled = false;
+  document.getElementById('next-btn').disabled = !answers[current];
+  if (current === 15) document.getElementById('main-nav').style.display = 'none';
+  buildProgress();
+}
+
+function prevStep() {
+  if (current <= 1) return;
+  document.getElementById('step-' + current).classList.remove('active');
+  if (current === 15) document.getElementById('main-nav').style.display = 'flex';
+  current--;
+  document.getElementById('step-' + current).classList.add('active');
+  document.getElementById('back-btn').disabled = current === 1;
+  document.getElementById('next-btn').disabled = false;
+  buildProgress();
+}
+
+function submitAll() {
+  let summary = '';
+  for (let i = 1; i <= 15; i++) {
+    if (answers[i]) summary += `Q${i} — ${questions[i]}: ${answers[i]}\n`;
+  }
+  document.getElementById('step-15').classList.remove('active');
+  document.getElementById('step-done').classList.add('active');
+  document.getElementById('main-nav').style.display = 'none';
+  document.getElementById('summary-text').innerText = summary;
+  buildProgress();
+}
+
+buildProgress();
+</script>
+</body>
+</html>
