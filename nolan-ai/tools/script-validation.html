@@ -201,6 +201,56 @@ function prevStep() {
   buildProgress();
 }
 
+// Maps this form's button labels to the backend's FeedbackIn enum values
+// (app/schemas/feedback.py). The link Rishi opens for a given script
+// should carry ?topic_id=...&script_id=... so the submission links back
+// to the right row in Master Topics / Scripts.
+const NOLAN_API_BASE = window.NOLAN_API_BASE || 'http://localhost:8000';
+
+const ENUM_MAP = {
+  1: {
+    'Yes, exactly how I talk': 'yes_exactly_how_i_talk',
+    'Close but needs small fixes': 'close_needs_small_fixes',
+    'No, sounds like someone else': 'no_sounds_like_someone_else',
+  },
+  2: {
+    'Natural — this is how I speak': 'natural',
+    'Slightly formal': 'slightly_formal',
+    'Too formal, needs to be looser': 'too_formal',
+  },
+  3: {
+    'Perfect mix': 'perfect_mix',
+    'More Hindi needed': 'more_hindi_needed',
+    'More English needed': 'more_english_needed',
+    'I prefer full English': 'prefer_full_english',
+  },
+  4: {
+    'Right length': 'right_length',
+    'Too short': 'too_short',
+    'Too long — I would cut it': 'too_long',
+  },
+  5: {
+    'Paired — easier on set': 'paired_easier_on_set',
+    'Separate tracks — cleaner to read': 'separate_tracks_cleaner',
+    'No preference': 'no_preference',
+  },
+  6: {
+    'Looks right': 'looks_right',
+    'Missing some details': 'missing_details',
+    'Wrong camera for some shots': 'wrong_camera',
+  },
+  7: {
+    'Very useful — I would use these': 'very_useful',
+    'Good starting point, I would edit': 'good_starting_point',
+    'Not useful — too generic': 'not_useful',
+  },
+};
+
+const FIELD_NAMES = {
+  1: 'q1_sounds_like_rishi', 2: 'q2_formality', 3: 'q3_hinglish_ratio',
+  4: 'q4_length', 5: 'q5_format', 6: 'q6_camera', 7: 'q7_supporting_outputs',
+};
+
 function submitAll() {
   const camera = document.getElementById('camera-notes').value;
   const extra = document.getElementById('extra-notes').value;
@@ -216,6 +266,25 @@ function submitAll() {
   document.getElementById('main-nav').style.display = 'none';
   document.getElementById('summary-text').innerText = summary;
   buildProgress();
+
+  const params = new URLSearchParams(window.location.search);
+  const payload = {
+    topic_id: params.get('topic_id') || null,
+    script_id: params.get('script_id') || null,
+    camera_notes: camera || null,
+    extra_notes: extra || null,
+  };
+  for (let i = 1; i <= 7; i++) {
+    if (answers[i] && ENUM_MAP[i]) payload[FIELD_NAMES[i]] = ENUM_MAP[i][answers[i]] || null;
+  }
+
+  fetch(`${NOLAN_API_BASE}/feedback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {
+    document.getElementById('summary-text').innerText += '\n\n(Could not reach server — feedback saved locally only. Please tell Sharayu.)';
+  });
 }
 
 buildProgress();
