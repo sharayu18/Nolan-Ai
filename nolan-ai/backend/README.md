@@ -80,15 +80,17 @@ backend/
   `ALERT_RECIPIENT_EMAIL` are set.
 - **Auth**: `/chat`, `/topics`, `/scripts`, `/analytics`, `/errors` all
   require a valid Supabase-issued JWT (`app/services/auth.py`) — verified
-  against `SUPABASE_JWT_SECRET`. `/feedback` and `/health` stay open
-  (script-validation.html submits without logging in). Until
-  `SUPABASE_JWT_SECRET` is set, protected routes return 503 rather than
+  against the project's public JWKS (newer Supabase projects sign tokens
+  asymmetrically with ES256, not a shared HS256 secret), fetched from
+  `SUPABASE_URL/auth/v1/.well-known/jwks.json`. `/feedback` and `/health`
+  stay open (script-validation.html submits without logging in). Until
+  `SUPABASE_URL` is set, protected routes return 503 rather than
   silently allowing access. See `../frontend/` for the Google-login client.
 
 ## Known gaps / next steps
 
 - No Supabase project exists yet — auth code is real but untestable
-  end-to-end until one is created and `SUPABASE_JWT_SECRET` /
+  end-to-end until one is created and `SUPABASE_URL` /
   `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are set (Setup
   Dependencies in `HANDOFF.md`).
 - Chat intent matching is deliberately simple keyword matching (same

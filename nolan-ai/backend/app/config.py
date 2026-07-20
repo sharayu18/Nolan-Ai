@@ -25,9 +25,11 @@ class Settings(BaseSettings):
     alert_recipient_email: str = ""
 
     # Supabase Auth — Google login. The frontend talks to Supabase directly;
-    # the backend only needs the JWT secret to verify the access token
-    # Supabase issues (Project Settings -> API -> JWT Settings -> JWT Secret).
-    supabase_jwt_secret: str = ""
+    # the backend verifies access tokens against the project's public JWKS
+    # (SUPABASE_URL/auth/v1/.well-known/jwks.json), so it only needs the
+    # project URL — same value as the frontend's VITE_SUPABASE_URL
+    # (Project Settings -> API -> Project URL).
+    supabase_url: str = ""
 
     # App
     cors_origins: str = "http://localhost:5173"
