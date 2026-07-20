@@ -2,7 +2,7 @@
 
 A three-agent AI content system for [@physicsexperimental](https://instagram.com/physicsexperimental) — a physics education Instagram channel — covering topic discovery, script generation, and post-performance analytics.
 
-**This repo is mid-rebuild.** The original system ran on [Relevance AI](https://relevanceai.com) with a Google Sheets backend (`agents/`, `docs/design-doc.md`) — that version is preserved here for reference. It's being rebuilt as a real FastAPI + Postgres/Supabase app in `backend/`; see `docs/HANDOFF.md` for the rebuild's full spec and status, and `backend/README.md` to run it.
+**This repo is mid-rebuild.** The original system ran on [Relevance AI](https://relevanceai.com) with a Google Sheets backend (`agents/`, `docs/design-doc.md`) — that version is preserved here for reference. It's being rebuilt as a real FastAPI + Postgres/Supabase backend (`backend/`) with a React chat frontend and Google login (`frontend/`); see `docs/HANDOFF.md` for the rebuild's full spec and status.
 
 ## Why "Nolan"
 
@@ -22,7 +22,8 @@ Designed for a very specific real-world constraint: 30 minutes of recording time
 
 ```
 nolan-ai/
-├── backend/           # FastAPI + Postgres/Supabase rebuild — see backend/README.md
+├── backend/            # FastAPI + Postgres/Supabase rebuild — see backend/README.md
+├── frontend/           # React chat UI + Google login (Supabase Auth) — see frontend/README.md
 ├── agents/            # Original Relevance AI system prompts + knowledge bases (reference)
 │   ├── search-agent-prompt.md
 │   └── script-agent-prompt.md
@@ -38,7 +39,7 @@ nolan-ai/
 
 ## Getting started
 
-**Rebuild (current):** read `docs/HANDOFF.md` for the full spec, then `backend/README.md` to run the FastAPI app locally.
+**Rebuild (current):** read `docs/HANDOFF.md` for the full spec, then `backend/README.md` and `frontend/README.md` to run both locally.
 
 **Original Relevance AI version (reference only):**
 1. Read `docs/design-doc.md` for the full context — channel analytics, the Google Sheets architecture, and why the system was built the way it was.

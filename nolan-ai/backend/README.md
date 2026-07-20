@@ -78,17 +78,24 @@ backend/
 - **Email alerts**: real SMTP send via `smtplib`; raises
   `EmailNotConfiguredError` (logged, not fatal) until `SMTP_HOST` /
   `ALERT_RECIPIENT_EMAIL` are set.
+- **Auth**: `/chat`, `/topics`, `/scripts`, `/analytics`, `/errors` all
+  require a valid Supabase-issued JWT (`app/services/auth.py`) — verified
+  against `SUPABASE_JWT_SECRET`. `/feedback` and `/health` stay open
+  (script-validation.html submits without logging in). Until
+  `SUPABASE_JWT_SECRET` is set, protected routes return 503 rather than
+  silently allowing access. See `../frontend/` for the Google-login client.
 
 ## Known gaps / next steps
 
-- No auth yet (Supabase Google login) — all endpoints are open. Add
-  before deploying anywhere reachable.
-- No React frontend yet — `chat.py` is designed to be driven by one, but
-  today only exposes a JSON API. Chat intent matching is deliberately
-  simple keyword matching (same literal trigger-phrase style as the
-  original docs), not general NLU — a frontend should pass structured
-  `topic_id`/`script_id` alongside the message once the user has picked
-  something from a list, since raw UUIDs aren't chat-friendly.
+- No Supabase project exists yet — auth code is real but untestable
+  end-to-end until one is created and `SUPABASE_JWT_SECRET` /
+  `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are set (Setup
+  Dependencies in `HANDOFF.md`).
+- Chat intent matching is deliberately simple keyword matching (same
+  literal trigger-phrase style as the original docs), not general NLU —
+  the frontend passes structured `topic_id`/`script_id` alongside the
+  message once the user has picked something from a list, since raw
+  UUIDs aren't chat-friendly (see `frontend/src/components/TopicPicker.tsx`).
 - `Script.instagram_media_id` (set via `POST /scripts/{id}/posted`) is
   what lets the Analytics Agent find which Graph API object to pull for
   a given script — populate it when a reel actually goes up.

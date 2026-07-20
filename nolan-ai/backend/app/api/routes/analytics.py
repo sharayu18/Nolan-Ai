@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from app.agents.analytics_agent import AnalyticsAgentError, AnalyticsFeedbackAgent
 from app.db.database import get_db
 from app.db.models import TopicCategory
+from app.services.auth import get_current_user
 
-router = APIRouter(prefix="/analytics", tags=["analytics"])
+router = APIRouter(prefix="/analytics", tags=["analytics"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("/fetch-due")

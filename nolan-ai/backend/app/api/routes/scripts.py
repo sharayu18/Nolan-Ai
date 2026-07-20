@@ -8,8 +8,9 @@ from app.agents.script_agent import ScriptAgentError, ScriptGenerationAgent
 from app.db.database import get_db
 from app.db.models import MasterTopic, Script
 from app.schemas.scripts import GenerateScriptIn, MarkPostedIn, ScriptOut
+from app.services.auth import get_current_user
 
-router = APIRouter(prefix="/scripts", tags=["scripts"])
+router = APIRouter(prefix="/scripts", tags=["scripts"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("/generate", response_model=ScriptOut)

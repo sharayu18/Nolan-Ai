@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.db.models import MasterTopic, TopicSource, TopicStatus
 from app.schemas.topics import RejectTopicIn, RishiTopicIn, TopicOut
+from app.services.auth import get_current_user
 
-router = APIRouter(prefix="/topics", tags=["topics"])
+router = APIRouter(prefix="/topics", tags=["topics"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("", response_model=list[TopicOut])

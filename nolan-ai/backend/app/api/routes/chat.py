@@ -20,8 +20,9 @@ from app.agents.search_agent import SearchAgentError, SearchEngineAgent
 from app.db.database import get_db
 from app.db.models import MasterTopic, ScriptLanguage
 from app.schemas.chat import ChatIn, ChatOut
+from app.services.auth import get_current_user
 
-router = APIRouter(prefix="/chat", tags=["chat"])
+router = APIRouter(prefix="/chat", tags=["chat"], dependencies=[Depends(get_current_user)])
 
 _SHARE_TOPICS_RE = re.compile(r"share.*this week|this week.*topics", re.I)
 _GENERATE_SCRIPT_RE = re.compile(r"generate script|script banao", re.I)

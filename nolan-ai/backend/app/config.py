@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     smtp_from_address: str = "nolan-ai@physicsexperimental.local"
     alert_recipient_email: str = ""
 
+    # Supabase Auth — Google login. The frontend talks to Supabase directly;
+    # the backend only needs the JWT secret to verify the access token
+    # Supabase issues (Project Settings -> API -> JWT Settings -> JWT Secret).
+    supabase_jwt_secret: str = ""
+
     # App
     cors_origins: str = "http://localhost:5173"
     channel_handle: str = "@physicsexperimental"
