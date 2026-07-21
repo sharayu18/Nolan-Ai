@@ -272,6 +272,7 @@ class AnalyticsFeedbackAgent:
                         week_start.date().isoformat(),
                         {"topic": title, "share_rate_pct": float(best.share_rate_pct or 0)},
                     )}],
+                    context="analytics_agent.weekly_digest",
                 ).text.strip()
             except Exception:  # noqa: BLE001 — digest generation failure is non-critical
                 summary = f"{title} — share rate {best.share_rate_pct}%"
@@ -352,6 +353,7 @@ def _interpret(metric_name: str, values: list[float], context: str) -> str:
         return call_claude(
             SYSTEM_PROMPT,
             [{"role": "user", "content": build_interpretation_prompt(metric_name, values, context)}],
+            context="analytics_agent._interpret",
         ).text.strip()
     except Exception:  # noqa: BLE001 — interpretation text is best-effort, not critical
         return context

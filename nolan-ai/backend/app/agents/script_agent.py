@@ -98,7 +98,10 @@ class ScriptGenerationAgent:
             prompt += f"\n\nPrevious attempt failed reflection check: {retry_notes}\nFix this and regenerate the full script."
 
         response = call_claude(
-            SYSTEM_PROMPT, [{"role": "user", "content": prompt}], use_web_search=False
+            SYSTEM_PROMPT,
+            [{"role": "user", "content": prompt}],
+            use_web_search=False,
+            context="script_agent.generate_package",
         )
         package = _parse_json_object(response.text)
         if not package:
@@ -107,7 +110,9 @@ class ScriptGenerationAgent:
 
     def _reflection_check(self, package: dict) -> tuple[bool, str]:
         prompt = build_reflection_prompt(package)
-        response = call_claude(SYSTEM_PROMPT, [{"role": "user", "content": prompt}])
+        response = call_claude(
+            SYSTEM_PROMPT, [{"role": "user", "content": prompt}], context="script_agent.reflection_check"
+        )
         result = _parse_json_object(response.text)
         if not result:
             return False, "Reflection check response unparseable."

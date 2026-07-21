@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -6,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import analytics, chat, errors, feedback, scripts, topics
 from app.config import settings
 from app.scheduler import create_scheduler
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
 
 @asynccontextmanager

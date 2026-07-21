@@ -89,6 +89,7 @@ class SearchEngineAgent:
                 [{"role": "user", "content": prompt}],
                 use_web_search=True,
                 max_web_searches=MAX_SEARCHES_PER_RUN,
+                context="search_agent.search_subarea",
             )
         except anthropic.APIError as exc:
             raise SearchAgentError(f"Search returns zero results — API call failed: {exc}") from exc
@@ -110,7 +111,9 @@ class SearchEngineAgent:
             return topics  # no rules configured -> nothing to filter against
 
         prompt = build_criteria_filter_prompt(rules, topics)
-        response = call_claude(SYSTEM_PROMPT, [{"role": "user", "content": prompt}])
+        response = call_claude(
+            SYSTEM_PROMPT, [{"role": "user", "content": prompt}], context="search_agent.apply_criteria_filter"
+        )
         verdicts = {v["topic_title"]: v["passes"] for v in _parse_json_array(response.text)}
 
         return [t for t in topics if verdicts.get(t["topic_title"], False)]
@@ -125,7 +128,9 @@ class SearchEngineAgent:
             return topics
 
         prompt = build_ranking_prompt(category, sub_area, topics)
-        response = call_claude(SYSTEM_PROMPT, [{"role": "user", "content": prompt}])
+        response = call_claude(
+            SYSTEM_PROMPT, [{"role": "user", "content": prompt}], context="search_agent.rank_topics"
+        )
         order = _parse_json_array(response.text)
         by_title = {t["topic_title"]: t for t in topics}
         ranked = [by_title[title] for title in order if title in by_title]
