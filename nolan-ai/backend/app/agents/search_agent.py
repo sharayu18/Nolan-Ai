@@ -17,6 +17,7 @@ import anthropic
 from app.agents.prompts.search_agent_prompt import (
     CATEGORY_METADATA,
     CATEGORY_ROTATION_ORDER,
+    MAX_SEARCHES_PER_RUN,
     SYSTEM_PROMPT,
     TOPICS_PER_RUN,
     build_criteria_filter_prompt,
@@ -84,7 +85,10 @@ class SearchEngineAgent:
         prompt = build_search_task_prompt(category, sub_area)
         try:
             response = call_claude(
-                SYSTEM_PROMPT, [{"role": "user", "content": prompt}], use_web_search=True
+                SYSTEM_PROMPT,
+                [{"role": "user", "content": prompt}],
+                use_web_search=True,
+                max_web_searches=MAX_SEARCHES_PER_RUN,
             )
         except anthropic.APIError as exc:
             raise SearchAgentError(f"Search returns zero results — API call failed: {exc}") from exc

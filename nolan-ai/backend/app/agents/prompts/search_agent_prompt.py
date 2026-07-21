@@ -174,7 +174,11 @@ CATEGORY_METADATA = {
 CATEGORY_ROTATION_ORDER = list(CATEGORY_METADATA.keys())
 
 TOPICS_PER_RUN = 15
-SUBAREAS_TO_SEARCH = "20-30 areas within the sub-area, thoroughly"
+
+# Each web search costs real money and adds its full results to this
+# request's input tokens — run a handful of well-targeted searches, not
+# an exhaustive crawl. (Hard-capped in code too — see anthropic_client.py.)
+MAX_SEARCHES_PER_RUN = 5
 
 
 def build_search_task_prompt(category: TopicCategory, sub_area: str) -> str:
@@ -184,8 +188,10 @@ Sub-area this week: {sub_area}
 
 Instruction: {meta['instruction']}
 
-Search {SUBAREAS_TO_SEARCH}. Generate up to {TOPICS_PER_RUN} candidate
-topics for this sub-area only.
+Run at most {MAX_SEARCHES_PER_RUN} targeted web searches on this sub-area
+— pick your queries carefully rather than searching broadly, budget is
+limited. Generate up to {TOPICS_PER_RUN} candidate topics for this
+sub-area only.
 
 Respond with ONLY a JSON array, no prose, in this exact shape:
 [
