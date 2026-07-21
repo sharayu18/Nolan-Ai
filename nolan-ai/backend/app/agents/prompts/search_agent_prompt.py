@@ -173,7 +173,7 @@ CATEGORY_METADATA = {
 
 CATEGORY_ROTATION_ORDER = list(CATEGORY_METADATA.keys())
 
-TOPICS_PER_RUN = 15
+TOPICS_PER_RUN = 5
 
 # Each web search costs real money and adds its full results to this
 # request's input tokens — run a handful of well-targeted searches, not
