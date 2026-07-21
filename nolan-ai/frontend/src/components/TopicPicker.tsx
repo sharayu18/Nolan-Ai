@@ -15,6 +15,7 @@ export default function TopicPicker() {
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [scripts, setScripts] = useState<Record<string, Script>>({});
+  const [searching, setSearching] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -56,6 +57,19 @@ export default function TopicPicker() {
     }
   };
 
+  const runSearch = async () => {
+    setSearching(true);
+    setError(null);
+    try {
+      const newTopics = await api.runSearchNow();
+      setTopics((prev) => [...newTopics, ...prev]);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Search run failed.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
   const generateScript = async (topicId: string) => {
     setBusyId(topicId);
     try {
@@ -74,10 +88,22 @@ export default function TopicPicker() {
     <div className="topic-picker">
       <div className="topic-picker-header">
         <h2>Pending topics</h2>
-        <button onClick={load}>Refresh</button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={runSearch} disabled={searching}>
+            {searching ? "Running search…" : "Run search now"}
+          </button>
+          <button onClick={load}>Refresh</button>
+        </div>
       </div>
+      {searching && (
+        <p className="error-text" style={{ color: "var(--muted)" }}>
+          Searching this week's category/sub-area and filtering results — this can take up to a minute.
+        </p>
+      )}
       {error && <p className="error-text">{error}</p>}
-      {topics.length === 0 && <p>No pending topics. Try "share this week's topics" in chat.</p>}
+      {topics.length === 0 && !searching && (
+        <p>No pending topics yet. Click "Run search now" or try "share this week's topics" in chat.</p>
+      )}
       {topics.map((topic) => (
         <div key={topic.topic_id} className="topic-card">
           <div className="topic-card-title">{topic.topic_title}</div>

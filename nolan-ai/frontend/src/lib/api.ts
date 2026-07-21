@@ -80,6 +80,8 @@ export const api = {
 
   listPendingTopics: () => request<Topic[]>("/topics?status=pending_to_pick"),
 
+  runSearchNow: () => request<Topic[]>("/topics/run-search", { method: "POST" }),
+
   pickTopic: (topicId: string) =>
     request<Topic>(`/topics/${topicId}/pick`, { method: "POST" }),
 

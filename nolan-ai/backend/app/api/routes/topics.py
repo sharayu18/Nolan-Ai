@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.agents.search_agent import SearchAgentError, SearchEngineAgent
 from app.db.database import get_db
 from app.db.models import MasterTopic, TopicSource, TopicStatus
 from app.schemas.topics import RejectTopicIn, RishiTopicIn, TopicOut
@@ -18,6 +19,17 @@ def list_topics(status: TopicStatus | None = None, db: Session = Depends(get_db)
     if status:
         query = query.where(MasterTopic.status == status)
     return list(db.execute(query).scalars())
+
+
+@router.post("/run-search", response_model=list[TopicOut])
+def run_search_now(db: Session = Depends(get_db)):
+    """Manually trigger the Search Engine Agent's weekly run, on demand —
+    normally this only fires via the Monday 10am cron (scheduler.py)."""
+    agent = SearchEngineAgent(db)
+    try:
+        return agent.run_weekly_search()
+    except SearchAgentError as exc:
+        raise HTTPException(502, str(exc)) from exc
 
 
 @router.post("", response_model=TopicOut)
