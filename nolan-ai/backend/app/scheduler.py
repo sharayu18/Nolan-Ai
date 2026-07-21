@@ -1,6 +1,8 @@
 """Cron triggers — the scheduled half of each agent's Trigger Conditions.
 
-- Search Engine Agent: Monday 10am, full weekly search run
+- Search Engine Agent: Monday 10am, full weekly search run — currently
+  DISABLED (Anthropic API costs money per run; use POST /topics/run-search
+  or the "Run search now" button instead until this is turned back on)
 - Analytics & Feedback Agent: weekly digest just before the Monday run
   (sequencing only — the digest does not feed data into the Search
   Agent's ranking logic, per HANDOFF.md's open call to sanity-check),
@@ -59,12 +61,9 @@ def create_scheduler() -> BackgroundScheduler:
         id="weekly_digest",
         replace_existing=True,
     )
-    scheduler.add_job(
-        run_monday_search,
-        CronTrigger(day_of_week="mon", hour=10, minute=0),
-        id="monday_search",
-        replace_existing=True,
-    )
+    # run_monday_search is intentionally not scheduled — disabled to avoid
+    # unattended Anthropic API spend. Trigger it manually via
+    # POST /topics/run-search (or the "Run search now" button) instead.
     scheduler.add_job(
         run_analytics_fetch_sweep,
         CronTrigger(minute=0),  # hourly — catches reels as they cross the 48h mark
